@@ -1,2 +1,2 @@
 # HideSeek
- MTEC-340 final project
+MTEC-340 final project
