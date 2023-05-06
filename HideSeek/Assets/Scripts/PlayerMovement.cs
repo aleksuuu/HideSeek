@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
-        bool obstaclePlaced = Input.GetKeyUp(KeyCode.RightShift);
+
         bool jump = Input.GetKey(KeyCode.Space);
 
         if (forward)
