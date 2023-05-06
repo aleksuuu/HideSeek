@@ -25,10 +25,40 @@ public class EnemyMovement : MonoBehaviour
     Animator animator;
     Vector2 velocity;
     Vector2 smoothDeltaPosition;
+
+    float speedLimit = 2f;
     int velocityHash;
     int isMovingHash;
 
-    bool isChasing = false;
+    //bool isChasing = false;
+
+    private bool _isChasing = false;
+
+    private bool IsChasing
+    {
+        get => _isChasing;
+        set
+        {
+            playerCam.enabled = !value;
+            enemyCam.enabled = value; // if enemy is chasing, switch to enemy cam
+            playerSmokeEm.enabled = !value;
+            enemySmokeEm.enabled = value;
+            if (value != _isChasing)
+            {
+                _isChasing = value;
+                if (value)
+                {
+                    //speedLimit = 1f;
+                    StartCoroutine(SpeedUp());
+                }
+                else
+                {
+                    speedLimit = 2f;
+                }
+            }
+        }
+    }
+
     bool inCoroutine = false;
 
     // The solution for avoiding obstacles comes from Daniel Eordogh's comment under this video: https://www.youtube.com/watch?v=Zjlg9F3FRJs
@@ -94,41 +124,99 @@ public class EnemyMovement : MonoBehaviour
 
 
 
-        if (!inCoroutine)
-        {
-            StartCoroutine(SetChasingState());
-        }
-        Vector3 normDir = (player.position - transform.position).normalized;
-        normDir = Quaternion.AngleAxis(vRotation, Vector3.up) * normDir;
+        //if (!inCoroutine)
+        //{
+        //    StartCoroutine(SetChasingState());
+        //}
+        Vector3 distance = player.position - transform.position;
         
-        //Vector3 destination = isChasing ? transform.position + (normDir * displacementDist)
-        //    : transform.position - (normDir * displacementDist);
-        Vector3 destination = locations[locationIdx].position;
+        float mag = distance.magnitude;
+        Vector3 normDir = distance.normalized;
+        if (!IsChasing && mag > 149f && mag < 150f)
+        {
+            Debug.Log("CLOSE");
+            IsChasing = Random.Range(0, 10) < 1;
+        }
+        else if (IsChasing)
+        {
+            if (mag > 800f)
+            {
+                IsChasing = false;
+            }
+            else if (mag > 200f && mag < 201f)
+            {
+                Debug.Log("FAR");
+                IsChasing = Random.Range(0, 10) < 1;
+            }
+        }
+        //switch (distance.magnitude)
+        //{
+        //    case < 200f:
+
+        //}
+
+
+        //normDir = Quaternion.AngleAxis(vRotation, Vector3.up) * normDir;
+
+        Vector3 destination = IsChasing ? transform.position + (normDir * displacementDist)
+            : transform.position - (normDir * displacementDist);
+        //Vector3 destination = locations[locationIdx].position;
         //if (agent.remainingDistance < 100f && !agent.pathPending)
         //    destination = locations[locationIdx].position;
         //bool isHit = Physics.Raycast(transform.position, destination, out RaycastHit hit, 50f);
-        bool isHit = Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 200f);
+        bool frontIsHit = Physics.Raycast(transform.position, transform.forward, out RaycastHit frontHit, 200f);
+        bool rightIsHit = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHit, 100f);
         transform.rotation = Quaternion.AngleAxis(vRotation, Vector3.up);
-        Debug.Log(isHit);
-        if (!isHit)
+
+
+        if (frontIsHit && frontHit.transform.CompareTag("Obstacle"))
         {
-            if (agent.remainingDistance < 100f && !agent.pathPending)
+            //agent.SetDestination(transform.position); // Stop the agent from moving if turning
+            if (rightIsHit && rightHit.transform.CompareTag("Obstacle"))
             {
-                Debug.Log("GO");
-                MoveToNextPatrolLocation();
+                vRotation -= 10f;
             }
-            //agent.SetDestination(destination);
-            //agent.destination = destination;
-        }
-        else if (hit.transform.CompareTag("Obstacle"))
-        {
-            
-            agent.SetDestination(transform.position);
-            
-            vRotation += 10f;
-           
+            else
+            {
+                vRotation += 10f;
+            }
+            //vRotation += Random.Range(0, 2) == 0 ? -10f : 10f;
             //isDirSafe = false;
         }
+
+        //if (agent.remainingDistance < 100f && !agent.pathPending)
+
+
+        //MoveToNextPatrolLocation();
+
+        if (!agent.pathPending)
+        {
+            if (IsChasing)
+            {
+                transform.LookAt(player);
+            }
+            //else
+            //{
+                agent.SetDestination(destination);
+                //transform.LookAt(destination);
+            //}
+        }
+        
+
+
+
+
+        //Debug.Log(destination);
+
+
+        //Debug.Log(agent.destination);
+        //else
+        //{
+        //    Debug.Log(agent.remainingDistance);
+        //    Debug.Log(agent.pathPending);
+        //}
+        //agent.destination = destination;
+
 
         //if (agent.remainingDistance < 100f && !agent.pathPending)
         //{
@@ -148,21 +236,44 @@ public class EnemyMovement : MonoBehaviour
         //    agent.SetDestination(transform.position - (normDir * displacementDist));
         //}
 
-
         SyncAnimatorAndAgent();
     }
 
-    IEnumerator SetChasingState()
+    //IEnumerator SetChasingState()
+    //{
+    //    inCoroutine = true;
+    //    bool old = isChasing;
+    //    isChasing = Random.Range(0, 10) < chanceOfChasing; // 30% chance chasing, 70% chance running
+    //    playerCam.enabled = !isChasing;
+    //    enemyCam.enabled = isChasing; // if enemy is chasing, switch to enemy cam
+    //    playerSmokeEm.enabled = !isChasing;
+    //    enemySmokeEm.enabled = isChasing;
+    //    if (!old && isChasing)
+    //    {
+    //        StartCoroutine(SpeedUp());
+    //    }
+    //    else if (old && !isChasing)
+    //    {
+    //        speedLimit = 2f;
+    //    }
+    //    Debug.Log("isChasing is" + isChasing);
+    //    yield return new WaitForSeconds(30f);
+    //    inCoroutine = false;
+    //}
+
+
+    IEnumerator SpeedUp(float initSpeed = 0f, float targetSpeed = 1f)
     {
-        inCoroutine = true;
-        isChasing = Random.Range(1, 11) < chanceOfChasing; // 30% chance chasing, 70% chance running
-        playerCam.enabled = !isChasing;
-        enemyCam.enabled = isChasing; // if enemy is chasing, switch to enemy cam
-        playerSmokeEm.enabled = !isChasing;
-        enemySmokeEm.enabled = isChasing;
-        Debug.Log("isChasing is" + isChasing);
-        yield return new WaitForSeconds(30f);
-        inCoroutine = false;
+        speedLimit = initSpeed;
+        yield return new WaitForSeconds(1f);
+        float currTime = 0f;
+        float accelDur = 2f;
+        while (currTime < accelDur)
+        {
+            speedLimit = Mathf.Lerp(initSpeed, targetSpeed, currTime / accelDur);
+            currTime += Time.deltaTime;
+            yield return null;
+        }
     }
 
     void InitializePatrolRoute()
@@ -221,8 +332,8 @@ public class EnemyMovement : MonoBehaviour
         smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
 
         velocity = smoothDeltaPosition / Time.deltaTime;
-        float speed = isChasing ? 1f : 2f;
-        velocity = Vector3.ClampMagnitude(velocity, speed);
+        float speed = IsChasing ? 1f : 2f;
+        velocity = Vector3.ClampMagnitude(velocity, speedLimit);
         if (agent.remainingDistance <= agent.stoppingDistance)
         {
             velocity = Vector2.Lerp(
