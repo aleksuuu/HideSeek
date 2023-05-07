@@ -13,8 +13,14 @@ public class PlayerMovement : MonoBehaviour
     int isMovingHash;
     float turn;
     float camTurnVertical;
-    [SerializeField] float mouseSensitivity = 5f;
     [SerializeField] Transform obstaclePrefab;
+    [SerializeField] float mouseSensitivity = 5f;
+
+    [Header("Constraints")]
+    [SerializeField] float minVert = -60.0f;
+    [SerializeField] float maxVert = 60.0f;
+
+
     Transform currObstacle;
     bool obstacleIsBeingPlaced = false;
     List<Transform> obstacles = new();
@@ -39,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
     {
         turn += Input.GetAxis("Mouse X") * mouseSensitivity;
         camTurnVertical -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        camTurnVertical = Mathf.Clamp(camTurnVertical, minVert, maxVert);
         transform.localRotation = Quaternion.Euler(0, turn, 0);
         camera.localRotation = Quaternion.Euler(camTurnVertical, 0, 0);
         bool forward = Input.GetKey(KeyCode.W);

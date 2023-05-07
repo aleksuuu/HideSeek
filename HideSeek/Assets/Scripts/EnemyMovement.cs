@@ -19,14 +19,18 @@ public class EnemyMovement : MonoBehaviour
     ParticleSystem.EmissionModule playerSmokeEm;
     ParticleSystem.EmissionModule enemySmokeEm;
     int locationIdx = 0;
+    Transform startTransform;
+    Vector3 destination = Vector3.zero;
+    NavMeshHit hit;
+    bool positionIsValid = false;
 
-    float displacementDist = 200f;
+    float displacementDist = 100f;
     NavMeshAgent agent;
     Animator animator;
     Vector2 velocity;
     Vector2 smoothDeltaPosition;
 
-    float speedLimit = 2f;
+    float speedLimit = 3f;
     int velocityHash;
     int isMovingHash;
 
@@ -39,13 +43,13 @@ public class EnemyMovement : MonoBehaviour
         get => _isChasing;
         set
         {
-            playerCam.enabled = !value;
-            enemyCam.enabled = value; // if enemy is chasing, switch to enemy cam
-            playerSmokeEm.enabled = !value;
-            enemySmokeEm.enabled = value;
             if (value != _isChasing)
             {
                 _isChasing = value;
+                playerCam.enabled = !value;
+                enemyCam.enabled = value; // if enemy is chasing, switch to enemy cam
+                playerSmokeEm.enabled = !value;
+                enemySmokeEm.enabled = value;
                 if (value)
                 {
                     //speedLimit = 1f;
@@ -53,7 +57,7 @@ public class EnemyMovement : MonoBehaviour
                 }
                 else
                 {
-                    speedLimit = 2f;
+                    speedLimit = 3f;
                 }
             }
         }
@@ -82,6 +86,10 @@ public class EnemyMovement : MonoBehaviour
     {
         playerSmokeEm = playerSmoke.emission;
         enemySmokeEm = enemySmoke.emission;
+        playerCam.enabled = true;
+        enemyCam.enabled = false; // if enemy is chasing, switch to enemy cam
+        playerSmokeEm.enabled = true;
+        enemySmokeEm.enabled = false;
         InitializePatrolRoute();
         MoveToNextPatrolLocation();
 
@@ -122,7 +130,10 @@ public class EnemyMovement : MonoBehaviour
         //        isDirSafe = true;
         //    }
 
-
+        //startTransform = transform;
+        //transform.rotation = Quaternion.LookRotation(transform.position - player.position);
+        //Vector3 runTo = transform.position + transform.forward * displacementDist;
+        
 
         //if (!inCoroutine)
         //{
@@ -132,10 +143,10 @@ public class EnemyMovement : MonoBehaviour
         
         float mag = distance.magnitude;
         Vector3 normDir = distance.normalized;
-        if (!IsChasing && mag > 149f && mag < 150f)
+        if (!IsChasing && mag > 149.9f && mag < 150f)
         {
             Debug.Log("CLOSE");
-            IsChasing = Random.Range(0, 10) < 1;
+            IsChasing = Random.Range(0, 10) < 8;
         }
         else if (IsChasing)
         {
@@ -143,10 +154,10 @@ public class EnemyMovement : MonoBehaviour
             {
                 IsChasing = false;
             }
-            else if (mag > 200f && mag < 201f)
+            else if (mag > 200f && mag < 200.1f)
             {
                 Debug.Log("FAR");
-                IsChasing = Random.Range(0, 10) < 1;
+                IsChasing = Random.Range(0, 10) < 8;
             }
         }
         //switch (distance.magnitude)
@@ -155,11 +166,32 @@ public class EnemyMovement : MonoBehaviour
 
         //}
 
+        // NEW
+
+        
+
+        // NEW/
+
+
+
+
 
         //normDir = Quaternion.AngleAxis(vRotation, Vector3.up) * normDir;
 
-        Vector3 destination = IsChasing ? transform.position + (normDir * displacementDist)
+        Vector3 fakeDestination = IsChasing ? transform.position + (normDir * displacementDist)
             : transform.position - (normDir * displacementDist);
+        positionIsValid = NavMesh.SamplePosition(fakeDestination, out hit, 20f, NavMesh.AllAreas);
+        if (positionIsValid)
+        {
+            destination = hit.position;
+        }
+
+        //do
+        //{
+        //    positionIsValid = NavMesh.SamplePosition(fakeDestination, out hit, 20f, NavMesh.AllAreas);
+        //} while (!positionIsValid);
+        //destination = hit.position;
+
         //Vector3 destination = locations[locationIdx].position;
         //if (agent.remainingDistance < 100f && !agent.pathPending)
         //    destination = locations[locationIdx].position;
@@ -332,7 +364,6 @@ public class EnemyMovement : MonoBehaviour
         smoothDeltaPosition = Vector2.Lerp(smoothDeltaPosition, deltaPosition, smooth);
 
         velocity = smoothDeltaPosition / Time.deltaTime;
-        float speed = IsChasing ? 1f : 2f;
         velocity = Vector3.ClampMagnitude(velocity, speedLimit);
         if (agent.remainingDistance <= agent.stoppingDistance)
         {

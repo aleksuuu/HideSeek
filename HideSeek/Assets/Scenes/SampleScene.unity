@@ -446,8 +446,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4cf7c991d3b74bedaed0cd1ff8f097f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 5
   obstaclePrefab: {fileID: 2649728030588316256, guid: 45050ea070fa542d3b1548dcfdba567a, type: 3}
+  mouseSensitivity: 5
+  minVert: -60
+  maxVert: 60
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
