@@ -16,13 +16,14 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] Camera enemyCam;
     [SerializeField] ParticleSystem playerSmoke;
     [SerializeField] ParticleSystem enemySmoke;
-    ParticleSystem.EmissionModule playerSmokeEm;
-    ParticleSystem.EmissionModule enemySmokeEm;
     int locationIdx = 0;
     Transform startTransform;
     Vector3 destination = Vector3.zero;
     NavMeshHit hit;
     bool positionIsValid = false;
+    readonly float doNotSwitchToChaseBeforeThisTime = 30f; // for the first 30 seconds of the game, don't switch to chasing no matter what
+
+    float currentTime = 0f;
 
     float displacementDist = 100f;
     NavMeshAgent agent;
@@ -46,10 +47,7 @@ public class EnemyMovement : MonoBehaviour
             if (value != _isChasing)
             {
                 _isChasing = value;
-                playerCam.enabled = !value;
-                enemyCam.enabled = value; // if enemy is chasing, switch to enemy cam
-                playerSmokeEm.enabled = !value;
-                enemySmokeEm.enabled = value;
+                SwitchCamAndFog();
                 if (value)
                 {
                     //speedLimit = 1f;
@@ -84,12 +82,7 @@ public class EnemyMovement : MonoBehaviour
 
     void Start()
     {
-        playerSmokeEm = playerSmoke.emission;
-        enemySmokeEm = enemySmoke.emission;
-        playerCam.enabled = true;
-        enemyCam.enabled = false; // if enemy is chasing, switch to enemy cam
-        playerSmokeEm.enabled = true;
-        enemySmokeEm.enabled = false;
+        SwitchCamAndFog();
         InitializePatrolRoute();
         MoveToNextPatrolLocation();
 
@@ -143,7 +136,13 @@ public class EnemyMovement : MonoBehaviour
         
         float mag = distance.magnitude;
         Vector3 normDir = distance.normalized;
-        if (!IsChasing && mag > 149.9f && mag < 150f)
+
+        if (currentTime < doNotSwitchToChaseBeforeThisTime)
+        {
+            currentTime += Time.deltaTime;
+            IsChasing = false;
+        }
+        else if (!IsChasing && mag > 149.9f && mag < 150f)
         {
             Debug.Log("CLOSE");
             IsChasing = Random.Range(0, 10) < 8;
@@ -338,6 +337,24 @@ public class EnemyMovement : MonoBehaviour
         } while (tmp == locationIdx);
         locationIdx = tmp;
         Debug.Log(locationIdx);
+    }
+
+    void SwitchCamAndFog()
+    {
+        playerCam.enabled = !IsChasing;
+        enemyCam.enabled = IsChasing; // if enemy is chasing, switch to enemy cam
+        if (IsChasing)
+        {
+            playerSmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            enemySmoke.Play();
+            Debug.Log("Enemy Fog");
+        }
+        else
+        {
+            enemySmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            playerSmoke.Play();
+            Debug.Log("Player Fog");
+        }
     }
 
 
