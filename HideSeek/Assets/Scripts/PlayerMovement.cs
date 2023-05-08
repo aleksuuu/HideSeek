@@ -83,9 +83,11 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool(isMovingHash, false);
         }
-        if (Input.GetKeyDown(KeyCode.RightShift))
+        if (Input.GetKeyDown(KeyCode.RightShift) && PlayerStats.Instance.BoxIsAvailable)
         {
             obstacleIsBeingPlaced = true;
+            PlayerStats.Instance.BoxProgress = 0f;
+            PlayerStats.Instance.DoStartBoxProgress = false;
         }
         if (obstacleIsBeingPlaced)
         {
@@ -107,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
             currObstacle.position += transform.forward * Input.GetAxis("Vertical");
             if (Input.GetKeyUp(KeyCode.RightShift))
             {
+                PlayerStats.Instance.DoStartBoxProgress = true;
                 obstacleIsBeingPlaced = false;
                 if (currObstacle)
                 {
@@ -151,10 +154,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = animator.deltaPosition;
         controller.Move(velocity);
         //controller.SimpleMove(velocity);
-        if (controller.isGrounded)
-        {
-            print("CharacterController is grounded");
-        }
+        //if (controller.isGrounded)
+        //{
+        //    print("CharacterController is grounded");
+        //}
     }
 
     //void OnControllerColliderHit(ControllerColliderHit hit)

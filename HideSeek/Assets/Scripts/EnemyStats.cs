@@ -24,7 +24,6 @@ public class EnemyStats : MonoBehaviour
         set
         {
             GUIBehavior.Instance.EnemyLives = value;
-            _remainingLives = value;
             if (value < 1)
             {
                 GameBehavior.Instance.CurrentState = State.Win;

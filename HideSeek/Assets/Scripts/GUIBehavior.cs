@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Text;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GUIBehavior : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GUIBehavior : MonoBehaviour
     [SerializeField] TextMeshProUGUI playerHearts;
     [SerializeField] TextMeshProUGUI message;
     [SerializeField] TextMeshProUGUI title;
+    [SerializeField] Slider boxSlider;
+    [SerializeField] Image boxIcon;
 
 
     private int _enemyLives = 3;
@@ -132,6 +135,21 @@ Press W to start
             string formattedRecord = TimerBehavior.Instance.GetFormattedTime(record);
             message.text = "Record: " + formattedRecord + "\n(Press W to restart)";
         }
+    }
+
+    public void SetBoxSlider(float percentage)
+    {
+        boxSlider.value = Mathf.Clamp(percentage, 0f, 1f);
+    }
+
+    public void MakeBoxIconTransparent()
+    {
+        boxIcon.color = new(boxIcon.color.r, boxIcon.color.g, boxIcon.color.b, 0.25f);
+    }
+
+    public void MakeBoxIconSolid()
+    {
+        boxIcon.color = new(boxIcon.color.r, boxIcon.color.g, boxIcon.color.b, 1f);
     }
 
 

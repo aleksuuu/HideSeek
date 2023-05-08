@@ -107,5 +107,27 @@ public class GameBehavior : MonoBehaviour
 #endif
             }
         }
+
+
+        if (PlayerStats.Instance.BoxProgress < PlayerStats.Instance.NumberOfSecondsForBoxToBeAvailable)
+        {
+            PlayerStats.Instance.BoxIsAvailable = false;
+            GUIBehavior.Instance.SetBoxSlider(PlayerStats.Instance.BoxProgress / PlayerStats.Instance.NumberOfSecondsForBoxToBeAvailable);
+            GUIBehavior.Instance.MakeBoxIconTransparent();
+            if (PlayerStats.Instance.DoStartBoxProgress)
+            {
+                PlayerStats.Instance.BoxProgress += Time.deltaTime;
+            }
+        }
+        else
+        {
+            PlayerStats.Instance.BoxIsAvailable = true;
+            GUIBehavior.Instance.SetBoxSlider(1f);
+            GUIBehavior.Instance.MakeBoxIconSolid();
+        }
+
+
+
+
     }
 }

@@ -40,4 +40,12 @@ public class PlayerStats : MonoBehaviour
         RemainingLives = TotalLives;
     }
 
+    public float BoxProgress = 0f;
+
+    public float NumberOfSecondsForBoxToBeAvailable = 15f;
+
+    public bool BoxIsAvailable = false;
+
+    public bool DoStartBoxProgress = true;
+
 }

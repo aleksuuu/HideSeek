@@ -88,7 +88,7 @@ BlendTree:
   m_Name: WalkRun
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: b0a6195d782754be8a5fcc2c9826ebd9, type: 2}
+    m_Motion: {fileID: -203655887218126122, guid: 7070f45b8882d4c639e849d2a4bb580b, type: 3}
     m_Threshold: 0.5
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -96,7 +96,7 @@ BlendTree:
     m_DirectBlendParameter: Velocity
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 7ecc7f41e2dc84552a55f8c1b8ce1fa6, type: 2}
+    m_Motion: {fileID: -203655887218126122, guid: bd2b8a73d71f549a3bc02de6e7809ed1, type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
