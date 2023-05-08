@@ -126,14 +126,14 @@ public class EnemyMovement : MonoBehaviour
         //startTransform = transform;
         //transform.rotation = Quaternion.LookRotation(transform.position - player.position);
         //Vector3 runTo = transform.position + transform.forward * displacementDist;
-        
+
 
         //if (!inCoroutine)
         //{
         //    StartCoroutine(SetChasingState());
         //}
         Vector3 distance = player.position - transform.position;
-        
+
         float mag = distance.magnitude;
         Vector3 normDir = distance.normalized;
 
@@ -287,22 +287,13 @@ public class EnemyMovement : MonoBehaviour
 
     IEnumerator OnCollisionEnter(Collision collision)
     {
-        if (doDetectCollision && collision.gameObject.CompareTag("Player"))
+        if (doDetectCollision && !IsChasing &&
+            collision.gameObject.CompareTag("Player"))
         {
-            if (IsChasing)
-            {
-                PlayerStats.Instance.RemainingLives--;
-                Debug.Log("EnemyMovement: PlayerLives--");
-            }
-            else
-            {
-                EnemyStats.Instance.RemainingLives--;
-                Debug.Log("EnemyMovement: EnemyLives--");
-            }
+            EnemyStats.Instance.RemainingLives--;
             doDetectCollision = false;
             yield return new WaitForSeconds(5f);
             doDetectCollision = true;
-
         }
     }
 

@@ -64,7 +64,7 @@ public class GameBehavior : MonoBehaviour
                 case State.Pause:
                     GUIBehavior.Instance.ShowPauseMessage();
                     GUIBehavior.Instance.ShowTitle(true);
-                    Time.timeScale = 0f; // On pause set timeScale to 0 so that powerups and portals do not disappear
+                    Time.timeScale = 0f;
                     break;
                 case State.Win:
                     BestTime = TimerBehavior.Instance.CurrSecInt;
