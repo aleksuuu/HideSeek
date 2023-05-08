@@ -16,6 +16,7 @@ public class EnemyStats : MonoBehaviour
         }
     }
 
+    [SerializeField] Vector3 initPosition = Vector3.zero;
     public int TotalLives = 3;
     private int _remainingLives = 3;
     public int RemainingLives
@@ -23,7 +24,8 @@ public class EnemyStats : MonoBehaviour
         get => _remainingLives;
         set
         {
-            GUIBehavior.Instance.EnemyLives = value;
+            _remainingLives = value;
+            GUIBehavior.Instance.UpdateEnemyHearts();
             if (value < 1)
             {
                 GameBehavior.Instance.CurrentState = State.Win;
@@ -35,5 +37,6 @@ public class EnemyStats : MonoBehaviour
     public void Reset()
     {
         RemainingLives = TotalLives;
+        transform.position = initPosition;
     }
 }

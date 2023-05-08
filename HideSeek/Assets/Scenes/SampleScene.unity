@@ -395,20 +395,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!136 &144125335
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148626041365}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 4.47
-  m_Height: 11.03
-  m_Direction: 1
-  m_Center: {x: 0, y: 5.5, z: 0}
 --- !u!1 &279787370
 GameObject:
   m_ObjectHideFlags: 0
@@ -17525,7 +17511,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148576212294}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -170.2}
+  m_LocalPosition: {x: 0, y: 0, z: -170}
   m_LocalScale: {x: 20, y: 20, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17546,7 +17532,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148626041365}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -98.17}
+  m_LocalPosition: {x: -400, y: 0, z: 600}
   m_LocalScale: {x: 9, y: 9, z: 9}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18031,10 +18017,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10da669db1504e4ba42a56e07ca0ece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initPosition: {x: 0, y: 0, z: -170}
   TotalLives: 3
   BoxProgress: 0
   NumberOfSecondsForBoxToBeAvailable: 15
   BoxIsAvailable: 0
+  DoStartBoxProgress: 1
 --- !u!114 &919132148576212297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18162,7 +18150,6 @@ GameObject:
   - component: {fileID: 5866666021371423445}
   - component: {fileID: 144125332}
   - component: {fileID: 5866666021371423446}
-  - component: {fileID: 144125335}
   - component: {fileID: 144125324}
   - component: {fileID: 144125325}
   - component: {fileID: 5866666021371423447}
@@ -26147,6 +26134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb4b2434d22c84b549278750a573e04a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initPosition: {x: -400, y: 0, z: 600}
   TotalLives: 3
   SecondsBeforeHarmingPlayer: 8
 --- !u!82 &5866666021371423447

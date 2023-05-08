@@ -37,6 +37,7 @@ public class EnemyMovement : MonoBehaviour
     bool inEndangeringCoroutine = false;
 
     //bool isChasing = false;
+    private bool doDetectCollision = true;
 
     private bool _isChasing = false;
 
@@ -284,9 +285,9 @@ public class EnemyMovement : MonoBehaviour
         PlayerStats.Instance.RemainingLives--;
     }
 
-    void OnCollisionEnter(Collision collision)
+    IEnumerator OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (doDetectCollision && collision.gameObject.CompareTag("Player"))
         {
             if (IsChasing)
             {
@@ -298,7 +299,10 @@ public class EnemyMovement : MonoBehaviour
                 EnemyStats.Instance.RemainingLives--;
                 Debug.Log("EnemyMovement: EnemyLives--");
             }
-            
+            doDetectCollision = false;
+            yield return new WaitForSeconds(5f);
+            doDetectCollision = true;
+
         }
     }
 

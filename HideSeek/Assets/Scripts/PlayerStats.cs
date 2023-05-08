@@ -17,6 +17,7 @@ public class PlayerStats : MonoBehaviour
     }
 
 
+    public Vector3 initPosition = Vector3.zero;
     public int TotalLives = 3;
 
 
@@ -25,9 +26,9 @@ public class PlayerStats : MonoBehaviour
     {
         get => _remainingLives;
         set
-        {    
-            GUIBehavior.Instance.PlayerLives = value;
+        {
             _remainingLives = value;
+            GUIBehavior.Instance.UpdatePlayerHearts();
             if (value < 1)
             {
                 GameBehavior.Instance.CurrentState = State.Lose;

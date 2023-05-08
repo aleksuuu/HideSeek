@@ -53,9 +53,7 @@ public class GameBehavior : MonoBehaviour
                 case State.Start:
                     GUIBehavior.Instance.ShowTutorialMessage();
                     GUIBehavior.Instance.ShowTitle(true);
-                    PlayerStats.Instance.Reset();
-                    EnemyStats.Instance.Reset();
-                    TimerBehavior.Instance.Reset();
+                    ResetEverything();
                     Time.timeScale = 0f;
                     break;
                 case State.Play:
@@ -88,9 +86,15 @@ public class GameBehavior : MonoBehaviour
 
     void Update()
     {
-        if (CurrentState != State.Play && Input.GetKey(KeyCode.W))
+        if ((CurrentState == State.Start || CurrentState == State.Pause)
+            && Input.GetKey(KeyCode.W))
         {
             CurrentState = State.Play;
+        }
+        if ((CurrentState == State.Win || CurrentState == State.Lose)
+            && Input.GetKey(KeyCode.Return))
+        {
+            CurrentState = State.Start;
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -125,9 +129,13 @@ public class GameBehavior : MonoBehaviour
             GUIBehavior.Instance.SetBoxSlider(1f);
             GUIBehavior.Instance.MakeBoxIconSolid();
         }
+    }
 
-
-
-
+    void ResetEverything()
+    {
+        PlayerStats.Instance.Reset();
+        EnemyStats.Instance.Reset();
+        PlayerMovement.Instance.Reset();
+        TimerBehavior.Instance.Reset();
     }
 }

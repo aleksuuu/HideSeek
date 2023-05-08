@@ -29,26 +29,13 @@ public class GUIBehavior : MonoBehaviour
     [SerializeField] Slider boxSlider;
     [SerializeField] Image boxIcon;
 
-
-    private int _enemyLives = 3;
-    public int EnemyLives
+    public void UpdateEnemyHearts()
     {
-        get => _enemyLives;
-        set
-        {
-            _enemyLives = value;
-            enemyHearts.text = GetHeartsString(value, EnemyStats.Instance.TotalLives);
-        }
+        enemyHearts.text = GetHeartsString(EnemyStats.Instance.RemainingLives, EnemyStats.Instance.TotalLives);
     }
-    private int _playerLives = 3;
-    public int PlayerLives
+    public void UpdatePlayerHearts()
     {
-        get => _playerLives;
-        set
-        {
-            _playerLives = value;
-            playerHearts.text = GetHeartsString(value, PlayerStats.Instance.TotalLives);
-        }
+        playerHearts.text = GetHeartsString(PlayerStats.Instance.RemainingLives, PlayerStats.Instance.TotalLives);
     }
 
     string GetHeartsString(int remaining, int total)
@@ -91,14 +78,15 @@ public class GUIBehavior : MonoBehaviour
     public void ShowTutorialMessage()
     {
         message.text =
-            @"W -> Move Forward
-LeftShift + W -> Run
-Mouse -> Direction
+            @"W - Move Forward
+LeftShift + W - Run
+Mouse - Direction
 
-Press RightShift to spawn an obstacle;
-while holding RightShift, use arrow keys to move the obstacle;
-release RightShift to place the obstacle
-Return -> Launch Fireworks (to destroy an obstacle)
+To place an obstacle:
+With RightShift held down, move the obstacle with arrow keys;
+release RigthShift to place it
+
+Return - Launch Fireworks (to destroy an obstacle)
 
 Press W to start
 ";
@@ -116,7 +104,7 @@ Press W to start
 
     public void ShowLoseMessage()
     {
-        message.text = "LOSER\n(Press W to restart)";
+        message.text = "LOSER\n(Press return to restart)";
     }
     public void ClearMessage()
     {
@@ -127,13 +115,13 @@ Press W to start
     {
         if (wasARecord)
         {
-            message.text = "NEW RECORD!\n(Press W to restart)";
+            message.text = "NEW RECORD!\n(Press return to restart)";
         }
         else
         {
             int record = GameBehavior.Instance.BestTime;
             string formattedRecord = TimerBehavior.Instance.GetFormattedTime(record);
-            message.text = "Record: " + formattedRecord + "\n(Press W to restart)";
+            message.text = "Record: " + formattedRecord + "\n(Press return to restart)";
         }
     }
 
