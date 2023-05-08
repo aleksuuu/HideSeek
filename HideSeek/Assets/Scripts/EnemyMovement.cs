@@ -8,7 +8,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] int chanceOfChasing = 3;
     [SerializeField] Transform patrolRoute;
     [SerializeField] List<Transform> locations;
     [SerializeField] Transform player;
@@ -34,6 +33,8 @@ public class EnemyMovement : MonoBehaviour
     float speedLimit = 3f;
     int velocityHash;
     int isMovingHash;
+
+    bool inEndangeringCoroutine = false;
 
     //bool isChasing = false;
 
@@ -61,8 +62,6 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    bool inCoroutine = false;
-
     // The solution for avoiding obstacles comes from Daniel Eordogh's comment under this video: https://www.youtube.com/watch?v=Zjlg9F3FRJs
     //// We will check if enemy can flee to the direction opposite from the player, we will check if there are obstacles
     //bool isDirSafe = false;
@@ -83,8 +82,8 @@ public class EnemyMovement : MonoBehaviour
     void Start()
     {
         SwitchCamAndFog();
-        InitializePatrolRoute();
-        MoveToNextPatrolLocation();
+        //InitializePatrolRoute();
+        //MoveToNextPatrolLocation();
 
         velocityHash = Animator.StringToHash("velocity");
         isMovingHash = Animator.StringToHash("isMoving");
@@ -149,33 +148,32 @@ public class EnemyMovement : MonoBehaviour
         }
         else if (IsChasing)
         {
+            if (mag < 250f)
+            {
+                if (!inEndangeringCoroutine)
+                {
+                    StartCoroutine(EndangerPlayer());
+                    inEndangeringCoroutine = true;
+                }
+            }
+            else
+            {
+                if (inEndangeringCoroutine)
+                {
+                    StopCoroutine(EndangerPlayer());
+                    StopCoroutine(GUIBehavior.Instance.PlayerHeartFlicker());
+                    inEndangeringCoroutine = false;
+                }
+            }
             if (mag > 800f)
             {
                 IsChasing = false;
             }
             else if (mag > 200f && mag < 200.1f)
             {
-                Debug.Log("FAR");
                 IsChasing = Random.Range(0, 10) < 8;
             }
         }
-        //switch (distance.magnitude)
-        //{
-        //    case < 200f:
-
-        //}
-
-        // NEW
-
-        
-
-        // NEW/
-
-
-
-
-
-        //normDir = Quaternion.AngleAxis(vRotation, Vector3.up) * normDir;
 
         Vector3 fakeDestination = IsChasing ? transform.position + (normDir * displacementDist)
             : transform.position - (normDir * displacementDist);
@@ -185,25 +183,14 @@ public class EnemyMovement : MonoBehaviour
             destination = hit.position;
         }
 
-        //do
-        //{
-        //    positionIsValid = NavMesh.SamplePosition(fakeDestination, out hit, 20f, NavMesh.AllAreas);
-        //} while (!positionIsValid);
-        //destination = hit.position;
-
-        //Vector3 destination = locations[locationIdx].position;
-        //if (agent.remainingDistance < 100f && !agent.pathPending)
-        //    destination = locations[locationIdx].position;
-        //bool isHit = Physics.Raycast(transform.position, destination, out RaycastHit hit, 50f);
         bool frontIsHit = Physics.Raycast(transform.position, transform.forward, out RaycastHit frontHit, 200f);
         bool rightIsHit = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHit, 100f);
         transform.rotation = Quaternion.AngleAxis(vRotation, Vector3.up);
 
 
-        if (frontIsHit && frontHit.transform.CompareTag("Obstacle"))
+        if (frontIsHit && frontHit.transform.CompareTag("Wall"))
         {
-            //agent.SetDestination(transform.position); // Stop the agent from moving if turning
-            if (rightIsHit && rightHit.transform.CompareTag("Obstacle"))
+            if (rightIsHit && rightHit.transform.CompareTag("Wall"))
             {
                 vRotation -= 10f;
             }
@@ -211,14 +198,7 @@ public class EnemyMovement : MonoBehaviour
             {
                 vRotation += 10f;
             }
-            //vRotation += Random.Range(0, 2) == 0 ? -10f : 10f;
-            //isDirSafe = false;
         }
-
-        //if (agent.remainingDistance < 100f && !agent.pathPending)
-
-
-        //MoveToNextPatrolLocation();
 
         if (!agent.pathPending)
         {
@@ -226,71 +206,13 @@ public class EnemyMovement : MonoBehaviour
             {
                 transform.LookAt(player);
             }
-            //else
-            //{
-                agent.SetDestination(destination);
-                //transform.LookAt(destination);
-            //}
+
+            agent.SetDestination(destination);
+
         }
-        
-
-
-
-
-        //Debug.Log(destination);
-
-
-        //Debug.Log(agent.destination);
-        //else
-        //{
-        //    Debug.Log(agent.remainingDistance);
-        //    Debug.Log(agent.pathPending);
-        //}
-        //agent.destination = destination;
-
-
-        //if (agent.remainingDistance < 100f && !agent.pathPending)
-        //{
-        //    //Debug.Log("Before:");
-        //    //Debug.Log(normDir);
-        //    normDir = Quaternion.AngleAxis(45f, Vector3.up) * normDir;
-        //    //Debug.Log("After:");
-        //    //Debug.Log(normDir);
-        //}
-        //if (isChasing)
-        //{
-        //    //transform.LookAt(player);
-        //    agent.SetDestination(transform.position + (normDir * displacementDist));
-        //}
-        //else
-        //{
-        //    agent.SetDestination(transform.position - (normDir * displacementDist));
-        //}
 
         SyncAnimatorAndAgent();
     }
-
-    //IEnumerator SetChasingState()
-    //{
-    //    inCoroutine = true;
-    //    bool old = isChasing;
-    //    isChasing = Random.Range(0, 10) < chanceOfChasing; // 30% chance chasing, 70% chance running
-    //    playerCam.enabled = !isChasing;
-    //    enemyCam.enabled = isChasing; // if enemy is chasing, switch to enemy cam
-    //    playerSmokeEm.enabled = !isChasing;
-    //    enemySmokeEm.enabled = isChasing;
-    //    if (!old && isChasing)
-    //    {
-    //        StartCoroutine(SpeedUp());
-    //    }
-    //    else if (old && !isChasing)
-    //    {
-    //        speedLimit = 2f;
-    //    }
-    //    Debug.Log("isChasing is" + isChasing);
-    //    yield return new WaitForSeconds(30f);
-    //    inCoroutine = false;
-    //}
 
 
     IEnumerator SpeedUp(float initSpeed = 0f, float targetSpeed = 1f)
@@ -353,10 +275,32 @@ public class EnemyMovement : MonoBehaviour
         {
             enemySmoke.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             playerSmoke.Play();
-            Debug.Log("Player Fog");
         }
     }
 
+    IEnumerator EndangerPlayer()
+    {
+        yield return GUIBehavior.Instance.PlayerHeartFlicker();
+        PlayerStats.Instance.RemainingLives--;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (IsChasing)
+            {
+                PlayerStats.Instance.RemainingLives--;
+                Debug.Log("EnemyMovement: PlayerLives--");
+            }
+            else
+            {
+                EnemyStats.Instance.RemainingLives--;
+                Debug.Log("EnemyMovement: EnemyLives--");
+            }
+            
+        }
+    }
 
 
     void OnAnimatorMove()

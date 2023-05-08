@@ -13,7 +13,14 @@ public class PlayerMovement : MonoBehaviour
     int isMovingHash;
     float turn;
     float camTurnVertical;
+
+    [Header("Prefabs")]
     [SerializeField] Transform obstaclePrefab;
+    [SerializeField] Transform rocketPrefab;
+    //Transform currRocket;
+    //List<Transform> rockets = new(5);
+
+    [Header("Preferences")]
     [SerializeField] float mouseSensitivity = 5f;
 
     [Header("Constraints")]
@@ -47,18 +54,19 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        //transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
         turn += Input.GetAxis("Mouse X") * mouseSensitivity;
         camTurnVertical -= Input.GetAxis("Mouse Y") * mouseSensitivity;
         camTurnVertical = Mathf.Clamp(camTurnVertical, minVert, maxVert);
         transform.localRotation = Quaternion.Euler(0, turn, 0);
         camera.localRotation = Quaternion.Euler(camTurnVertical, 0, 0);
-        bool forward = Input.GetKey(KeyCode.W);
 
         
 
         bool jump = Input.GetKey(KeyCode.Space);
 
-        if (forward)
+        if (Input.GetKey(KeyCode.W))
         {
             bool run = Input.GetKey(KeyCode.LeftShift);
             if (run)
@@ -81,6 +89,22 @@ public class PlayerMovement : MonoBehaviour
         }
         if (obstacleIsBeingPlaced)
         {
+            if (!currObstacle)
+            {
+                currObstacle = Instantiate(obstaclePrefab);
+                currMeshRenderer = currObstacle.GetChild(0).GetComponent<MeshRenderer>();
+                if (currMeshRenderer)
+                {
+                    currMeshRenderer.material = transparentBoxMat;
+                }
+                else
+                {
+                    Debug.Log("No MeshRenderer found");
+                }
+                currObstacle.position = transform.position + transform.forward * 100f;
+            }
+            currObstacle.position += transform.right * Input.GetAxis("Horizontal");
+            currObstacle.position += transform.forward * Input.GetAxis("Vertical");
             if (Input.GetKeyUp(KeyCode.RightShift))
             {
                 obstacleIsBeingPlaced = false;
@@ -94,27 +118,26 @@ public class PlayerMovement : MonoBehaviour
                     currObstacle = null;
                 }
             }
-            if (!currObstacle)
-            {
-                currObstacle = Instantiate(obstaclePrefab);
-                //currMeshRenderer = currObstacle.GetComponent<MeshRenderer>();
-                currMeshRenderer = currObstacle.GetChild(0).GetComponent<MeshRenderer>();
-                if (currMeshRenderer)
-                {
-                    currMeshRenderer.material = transparentBoxMat;
-                }
-                else
-                {
-                    Debug.Log("No MeshRenderer found");
-                }
-                currObstacle.position = transform.position + transform.forward * 60f;
-            }
-            currObstacle.position += transform.right * Input.GetAxis("Horizontal");
-            currObstacle.position += transform.forward * Input.GetAxis("Vertical");
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            Transform currRocket = Instantiate(rocketPrefab);
+            currRocket.position = transform.position + transform.up * 50f + transform.forward * 20f;
+            currRocket.eulerAngles = transform.eulerAngles + new Vector3(0f, -90f, -90f);
+            currRocket.GetComponent<ConstantForce>().force = transform.forward * 100f;
+            //currRocket.GetComponent<ConstantForce>().force = Vector3.zero;
+            //rockets.Add(currRocket);
+            //newRocket.eulerAngles = transform.eulerAngles;
 
+
+            //bool frontIsHit = Physics.Raycast(transform.position, transform.forward, out RaycastHit frontHit, 200f);
+            //if (frontIsHit)
+            //{
+            //    if (frontHit.transform.CompareTag("Obstacle"))
+            //    {
+
+            //    }
+            //}
         }
 
 
@@ -126,121 +149,21 @@ public class PlayerMovement : MonoBehaviour
     void OnAnimatorMove()
     {
         Vector3 velocity = animator.deltaPosition;
-        //velocity.y = ySpeed * Time.deltaTime;
         controller.Move(velocity);
+        //controller.SimpleMove(velocity);
+        if (controller.isGrounded)
+        {
+            print("CharacterController is grounded");
+        }
     }
 
     //void OnControllerColliderHit(ControllerColliderHit hit)
     //{
-
+    //    Debug.Log(transform.position);
+        
     //}
 
 
-    // if setToTransparent is true, then set to transparent; else set to opaque
-    //void SwitchToTransparent(Material material, bool setToTransparent)
-    //{
-    //    // code from StandardShaderGUI.cs (see https://docs.unity3d.com/Manual/StandardShaderMaterialParameterRenderingMode.html)
-    //    //int minRenderQueue = -1;
-    //    //int maxRenderQueue = 5000;
-    //    //int defaultRenderQueue = -1;
-    //    if (setToTransparent)
-    //    {
-    //        material.SetOverrideTag("RenderType", "Transparent");
-    //        material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-    //        material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-    //        material.SetFloat("_ZWrite", 0.0f);
-    //        material.DisableKeyword("_ALPHATEST_ON");
-    //        material.DisableKeyword("_ALPHABLEND_ON");
-    //        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-    //        //minRenderQueue = (int)UnityEngine.Rendering.RenderQueue.GeometryLast + 1;
-    //        //maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Overlay - 1;
-    //        //defaultRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-    //    }
-    //    else
-    //    {
-    //        material.SetOverrideTag("RenderType", "");
-    //        material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-    //        material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-    //        material.SetFloat("_ZWrite", 1.0f);
-    //        material.DisableKeyword("_ALPHATEST_ON");
-    //        material.DisableKeyword("_ALPHABLEND_ON");
-    //        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-    //        //minRenderQueue = -1;
-    //        //maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest - 1;
-    //        //defaultRenderQueue = -1;
-    //    }
-    //    //if (overrideRenderQueue || material.renderQueue < minRenderQueue || material.renderQueue > maxRenderQueue)
-    //    //{
-    //    //    if (!overrideRenderQueue)
-    //    //        Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null, "Render queue value outside of the allowed range ({0} - {1}) for selected Blend mode, resetting render queue to default", minRenderQueue, maxRenderQueue);
-    //    //    material.renderQueue = defaultRenderQueue;
-    //    //}
-    //}
 
-
-    //public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode, bool overrideRenderQueue)
-    //{
-    //    int minRenderQueue = -1;
-    //    int maxRenderQueue = 5000;
-    //    int defaultRenderQueue = -1;
-    //    switch (blendMode)
-    //    {
-    //        case BlendMode.Opaque:
-    //            material.SetOverrideTag("RenderType", "");
-    //            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-    //            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-    //            material.SetFloat("_ZWrite", 1.0f);
-    //            material.DisableKeyword("_ALPHATEST_ON");
-    //            material.DisableKeyword("_ALPHABLEND_ON");
-    //            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-    //            minRenderQueue = -1;
-    //            maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest - 1;
-    //            defaultRenderQueue = -1;
-    //            break;
-    //        case BlendMode.Cutout:
-    //            material.SetOverrideTag("RenderType", "TransparentCutout");
-    //            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-    //            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.Zero);
-    //            material.SetFloat("_ZWrite", 1.0f);
-    //            material.EnableKeyword("_ALPHATEST_ON");
-    //            material.DisableKeyword("_ALPHABLEND_ON");
-    //            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-    //            minRenderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-    //            maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.GeometryLast;
-    //            defaultRenderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
-    //            break;
-    //        case BlendMode.Fade:
-    //            material.SetOverrideTag("RenderType", "Transparent");
-    //            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-    //            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-    //            material.SetFloat("_ZWrite", 0.0f);
-    //            material.DisableKeyword("_ALPHATEST_ON");
-    //            material.EnableKeyword("_ALPHABLEND_ON");
-    //            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-    //            minRenderQueue = (int)UnityEngine.Rendering.RenderQueue.GeometryLast + 1;
-    //            maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Overlay - 1;
-    //            defaultRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-    //            break;
-    //        case BlendMode.Transparent:
-    //            material.SetOverrideTag("RenderType", "Transparent");
-    //            material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
-    //            material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-    //            material.SetFloat("_ZWrite", 0.0f);
-    //            material.DisableKeyword("_ALPHATEST_ON");
-    //            material.DisableKeyword("_ALPHABLEND_ON");
-    //            material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-    //            minRenderQueue = (int)UnityEngine.Rendering.RenderQueue.GeometryLast + 1;
-    //            maxRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Overlay - 1;
-    //            defaultRenderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-    //            break;
-    //    }
-
-    //    if (overrideRenderQueue || material.renderQueue < minRenderQueue || material.renderQueue > maxRenderQueue)
-    //    {
-    //        if (!overrideRenderQueue)
-    //            Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null, "Render queue value outside of the allowed range ({0} - {1}) for selected Blend mode, resetting render queue to default", minRenderQueue, maxRenderQueue);
-    //        material.renderQueue = defaultRenderQueue;
-    //    }
-    //}
 
 }
