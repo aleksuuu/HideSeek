@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     int isMovingHash;
     float turn;
     float camTurnVertical;
+    float gravity = -9.8f;
 
     [Header("Prefabs")]
     [SerializeField] Transform obstaclePrefab;
@@ -66,7 +67,6 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
         turn += Input.GetAxis("Mouse X") * mouseSensitivity;
         camTurnVertical -= Input.GetAxis("Mouse Y") * mouseSensitivity;
         camTurnVertical = Mathf.Clamp(camTurnVertical, minVert, maxVert);
@@ -150,13 +150,14 @@ public class PlayerMovement : MonoBehaviour
     void OnAnimatorMove()
     {
         Vector3 velocity = animator.deltaPosition;
+        velocity.y = gravity;
         controller.Move(velocity);
-        if (transform.position.y != 0f) // definitely not a very elegant solution but this prevents the player from floating or sinking...
-        {
-            controller.enabled = false;
-            transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
-            controller.enabled = true;
-        }
+        //if (transform.position.y != 0f) // definitely not a very elegant solution but this prevents the player from floating or sinking...
+        //{
+        //    controller.enabled = false;
+        //    transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
+        //    controller.enabled = true;
+        //}
     }
 
     public void Reset()

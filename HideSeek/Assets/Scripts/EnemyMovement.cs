@@ -37,7 +37,6 @@ public class EnemyMovement : MonoBehaviour
     IEnumerator endangeringCoroutine;
     IEnumerator flickeringCoroutine;
 
-    //bool isChasing = false;
     private bool doDetectCollision = true;
 
     private bool _isChasing = false;
@@ -53,7 +52,6 @@ public class EnemyMovement : MonoBehaviour
                 SwitchCamAndFog();
                 if (value)
                 {
-                    //speedLimit = 1f;
                     StartCoroutine(SpeedUp());
                 }
                 else
@@ -89,52 +87,11 @@ public class EnemyMovement : MonoBehaviour
 
         velocityHash = Animator.StringToHash("velocity");
         isMovingHash = Animator.StringToHash("isMoving");
-
-        //endangeringCoroutine = EndangerPlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (!isDirSafe)
-        //{
-
-
-        //    //Rotate the direction of the Enemy to move
-        //    newPos = Quaternion.Euler(0, vRotation, 0) * newPos;
-
-        //    //Shoot a Raycast out to the new direction with 5f length (as example raycast length) and see if it hits an obstacle
-        //    bool isHit = Physics.Raycast(transform.position, newPos, out RaycastHit hit, 3f, layerMask);
-
-        //    if (hit.transform == null)
-        //    {
-        //        //If the Raycast to the flee direction doesn't hit a wall then the Enemy is good to go to this direction
-        //        nvAgent.SetDestination(newPos);
-        //        isDirSafe = true;
-        //    }
-
-        //    //Change the direction of fleeing is it hits a wall by 20 degrees
-        //    if (isHit && hit.transform.CompareTag("Wall"))
-        //    {
-        //        vRotation += 20;
-        //        isDirSafe = false;
-        //    }
-        //    else
-        //    {
-        //        //If the Raycast to the flee direction doesn't hit a wall then the Enemy is good to go to this direction
-        //        nvAgent.SetDestination(newPos);
-        //        isDirSafe = true;
-        //    }
-
-        //startTransform = transform;
-        //transform.rotation = Quaternion.LookRotation(transform.position - player.position);
-        //Vector3 runTo = transform.position + transform.forward * displacementDist;
-
-
-        //if (!inCoroutine)
-        //{
-        //    StartCoroutine(SetChasingState());
-        //}
         Vector3 distance = player.position - transform.position;
 
         float mag = distance.magnitude;
