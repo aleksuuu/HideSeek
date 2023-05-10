@@ -8,6 +8,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent), typeof(Animator))]
 public class EnemyMovement : MonoBehaviour
 {
+    [SerializeField] AudioSource enemySFX;
+    [SerializeField] AudioSource playerSFX;
     [SerializeField] Transform patrolRoute;
     [SerializeField] List<Transform> locations;
     [SerializeField] Transform player;
@@ -16,13 +18,9 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] ParticleSystem playerSmoke;
     [SerializeField] ParticleSystem enemySmoke;
     int locationIdx = 0;
-    Transform startTransform;
     Vector3 destination = Vector3.zero;
     NavMeshHit hit;
     bool positionIsValid = false;
-    readonly float doNotSwitchToChaseBeforeThisTime = 30f; // for the first 30 seconds of the game, don't switch to chasing no matter what
-
-    float currentTime = 0f;
 
     float displacementDist = 100f;
     NavMeshAgent agent;
@@ -35,6 +33,9 @@ public class EnemyMovement : MonoBehaviour
     int isMovingHash;
 
     bool inEndangeringCoroutine = false;
+
+    IEnumerator endangeringCoroutine;
+    IEnumerator flickeringCoroutine;
 
     //bool isChasing = false;
     private bool doDetectCollision = true;
@@ -88,6 +89,8 @@ public class EnemyMovement : MonoBehaviour
 
         velocityHash = Animator.StringToHash("velocity");
         isMovingHash = Animator.StringToHash("isMoving");
+
+        //endangeringCoroutine = EndangerPlayer();
     }
 
     // Update is called once per frame
@@ -137,33 +140,33 @@ public class EnemyMovement : MonoBehaviour
         float mag = distance.magnitude;
         Vector3 normDir = distance.normalized;
 
-        if (currentTime < doNotSwitchToChaseBeforeThisTime)
+        if (TimerBehavior.Instance.CurrSecInt < EnemyStats.Instance.SecondsBeforePossiblyChasing)
         {
-            currentTime += Time.deltaTime;
             IsChasing = false;
         }
         else if (!IsChasing && mag > 149.9f && mag < 150f)
         {
-            Debug.Log("CLOSE");
             IsChasing = Random.Range(0, 10) < 8;
         }
         else if (IsChasing)
         {
-            if (mag < 250f)
+            if (mag < 150f)
             {
                 if (!inEndangeringCoroutine)
                 {
-                    StartCoroutine(EndangerPlayer());
                     inEndangeringCoroutine = true;
+                    endangeringCoroutine = EndangerPlayer();
+                    StartCoroutine(endangeringCoroutine);
                 }
             }
             else
             {
                 if (inEndangeringCoroutine)
                 {
-                    StopCoroutine(EndangerPlayer());
-                    StopCoroutine(GUIBehavior.Instance.PlayerHeartFlicker());
+                    Debug.Log("Trying to stop coroutine");
                     inEndangeringCoroutine = false;
+                    StopCoroutine(endangeringCoroutine);
+                    StopCoroutine(flickeringCoroutine);
                 }
             }
             if (mag > 800f)
@@ -281,7 +284,19 @@ public class EnemyMovement : MonoBehaviour
 
     IEnumerator EndangerPlayer()
     {
-        yield return GUIBehavior.Instance.PlayerHeartFlicker();
+        Debug.Log("Start hurting");
+        flickeringCoroutine = GUIBehavior.Instance.PlayerHeartFlicker();
+        yield return flickeringCoroutine;
+        Debug.Log("Life lost");
+        enemySFX.PlayOneShot(SFXBehavior.Instance.EnemyLaugh);
+        if (PlayerStats.Instance.RemainingLives == 1)
+        {
+            playerSFX.PlayOneShot(SFXBehavior.Instance.PlayerDeath);
+        }
+        else
+        {
+            playerSFX.PlayOneShot(SFXBehavior.Instance.PlayerGroan);
+        }
         PlayerStats.Instance.RemainingLives--;
     }
 
@@ -290,6 +305,14 @@ public class EnemyMovement : MonoBehaviour
         if (doDetectCollision && !IsChasing &&
             collision.gameObject.CompareTag("Player"))
         {
+            if (EnemyStats.Instance.RemainingLives == 1)
+            {
+                enemySFX.PlayOneShot(SFXBehavior.Instance.EnemyDeath);
+            }
+            else
+            {
+                enemySFX.PlayOneShot(SFXBehavior.Instance.EnemyGroan);
+            }
             EnemyStats.Instance.RemainingLives--;
             doDetectCollision = false;
             yield return new WaitForSeconds(5f);

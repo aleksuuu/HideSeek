@@ -18,8 +18,8 @@ public class GameBehavior : MonoBehaviour
             Instance = this;
         }
         _bestTime = PlayerPrefs.GetInt("bestTime");
+        
     }
-
 
     private int _bestTime;
     public int BestTime
@@ -59,21 +59,25 @@ public class GameBehavior : MonoBehaviour
                 case State.Play:
                     GUIBehavior.Instance.ClearMessage();
                     GUIBehavior.Instance.ShowTitle(false);
+                    SoundtrackBehavior.Instance.FadeInSoundtrack();
                     Time.timeScale = 1f;
                     break;
                 case State.Pause:
                     GUIBehavior.Instance.ShowPauseMessage();
                     GUIBehavior.Instance.ShowTitle(true);
+                    SoundtrackBehavior.Instance.LowPassSoundtrack();
                     Time.timeScale = 0f;
                     break;
                 case State.Win:
                     BestTime = TimerBehavior.Instance.CurrSecInt;
                     GUIBehavior.Instance.ShowTitle(true);
+                    SoundtrackBehavior.Instance.FadeOutSoundtrack();
                     Time.timeScale = 0f;
                     break;
                 case State.Lose:
                     GUIBehavior.Instance.ShowLoseMessage();
                     GUIBehavior.Instance.ShowTitle(true);
+                    SoundtrackBehavior.Instance.FadeOutSoundtrack();
                     Time.timeScale = 0f;
                     break;
             }

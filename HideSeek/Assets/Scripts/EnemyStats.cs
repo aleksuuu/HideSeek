@@ -33,10 +33,12 @@ public class EnemyStats : MonoBehaviour
         }
     }
     public float SecondsBeforeHarmingPlayer = 8f;
+    public int SecondsBeforePossiblyChasing = 30;
 
     public void Reset()
     {
         RemainingLives = TotalLives;
         transform.position = initPosition;
+        SecondsBeforeHarmingPlayer = Random.Range(15, 30);
     }
 }

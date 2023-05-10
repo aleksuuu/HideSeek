@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(CharacterController), typeof(Animator))]
+[RequireComponent(typeof(CharacterController), typeof(Animator), typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
     public static PlayerMovement Instance;
@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     }
     Animator animator;
     CharacterController controller;
+    AudioSource source;
     Transform camera;
     float velocity = 0f;
     int velocityHash;
@@ -31,8 +32,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] Transform obstaclePrefab;
     [SerializeField] Transform rocketPrefab;
-    //Transform currRocket;
-    //List<Transform> rockets = new(5);
 
     [Header("Preferences")]
     [SerializeField] float mouseSensitivity = 5f;

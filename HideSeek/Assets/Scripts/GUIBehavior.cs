@@ -57,16 +57,18 @@ public class GUIBehavior : MonoBehaviour
     {
         string orig = playerHearts.text;
         StringBuilder sb = new(orig);
-        sb[orig.Length - 1] = '♡';
+        sb[PlayerStats.Instance.RemainingLives - 1] = '♡';
         string newString = sb.ToString();
         int flicker = 0;
-        while (flicker < 8)
+        while (flicker < 16)
         {
             playerHearts.text = flicker % 2 == 0 ? orig : newString;
 
             flicker++;
 
-            yield return new WaitForSeconds(EnemyStats.Instance.SecondsBeforeHarmingPlayer / 8);
+            Debug.Log("flicker" + flicker);
+
+            yield return new WaitForSeconds(EnemyStats.Instance.SecondsBeforeHarmingPlayer / 16f);
         }
     }
 

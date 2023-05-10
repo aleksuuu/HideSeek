@@ -6,7 +6,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EnemyFootsteps
+  m_Name: Enemy
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: ccd4926e2966e4457ab22c18e5518c57
   m_Children: []
@@ -76,7 +76,7 @@ AudioMixerController:
   m_StartSnapshot: {fileID: 24500006}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ExposedParameters: []
   m_AudioMixerGroupViews:
   - guids:
@@ -135,7 +135,7 @@ AudioMixerSnapshotController:
   m_FloatValues:
     e33ba9707d67040dfbb5a078292e33d8: -7739
     d2752511dcf314b93ab9541ec428dd1a: 0.0774
-    d95c5481826fb40c691860d176f6265b: -37.04165
+    d95c5481826fb40c691860d176f6265b: -13.63726
     574ea32212b61471ebe435f380fbd2a9: -2264
     3b6ae983602e741aa99f7c057a440ac0: -3178
     a2b17b55e6a724954bf28ea327b6892d: 0.0774
@@ -143,7 +143,7 @@ AudioMixerSnapshotController:
     b194d6c6a40a24915bb5495d5680fef0: 4.66
     f70ed4278ffac4598bdc932206560904: -5204
     fce3d7875643f4422a855951c07c6fb3: 0
-    1d0d52b878f0b42bea11d2bc305fc074: -36.171307
+    1d0d52b878f0b42bea11d2bc305fc074: -13.637256
     9cf757a90ad80422fa26ab742b7437ae: -7739
     f54ce8fab9dd0420d84fe100a0f9dcac: -4200
     08c62fab6c41a40518edb3c777de057b: -20
@@ -262,7 +262,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PlayerFootsteps
+  m_Name: Player
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: c50d28c0c86ea41369f70e351c4e4a20
   m_Children: []
