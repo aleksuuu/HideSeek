@@ -1077,6 +1077,7 @@ MonoBehaviour:
   FullVolume: {fileID: 24500006, guid: ca8d8158a949d43e7b6996697a5e2ad7, type: 2}
   NoVolume: {fileID: 2464278018356132818, guid: ca8d8158a949d43e7b6996697a5e2ad7, type: 2}
   LowPassed: {fileID: -8929772400235838985, guid: ca8d8158a949d43e7b6996697a5e2ad7, type: 2}
+  HiPassed: {fileID: 5940952131545189346, guid: ca8d8158a949d43e7b6996697a5e2ad7, type: 2}
 --- !u!1 &821372469
 GameObject:
   m_ObjectHideFlags: 0

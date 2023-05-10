@@ -59,6 +59,8 @@ public class GUIBehavior : MonoBehaviour
         StringBuilder sb = new(orig);
         sb[PlayerStats.Instance.RemainingLives - 1] = '♡';
         string newString = sb.ToString();
+        Debug.Log("Old String: " + orig);
+        Debug.Log("New String: " + newString);
         int flicker = 0;
         while (flicker < 16)
         {

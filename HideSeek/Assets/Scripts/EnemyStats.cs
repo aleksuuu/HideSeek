@@ -39,6 +39,6 @@ public class EnemyStats : MonoBehaviour
     {
         RemainingLives = TotalLives;
         transform.position = initPosition;
-        SecondsBeforeHarmingPlayer = Random.Range(15, 30);
+        SecondsBeforePossiblyChasing = Random.Range(0, 1);
     }
 }

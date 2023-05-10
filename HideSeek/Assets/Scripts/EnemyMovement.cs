@@ -143,10 +143,12 @@ public class EnemyMovement : MonoBehaviour
         if (TimerBehavior.Instance.CurrSecInt < EnemyStats.Instance.SecondsBeforePossiblyChasing)
         {
             IsChasing = false;
+            SoundtrackBehavior.Instance.NormalSoundtrack(); // TODO: isChasing and isChased should be two states
         }
         else if (!IsChasing && mag > 149.9f && mag < 150f)
         {
             IsChasing = Random.Range(0, 10) < 8;
+            SoundtrackBehavior.Instance.NormalSoundtrack();
         }
         else if (IsChasing)
         {
@@ -154,6 +156,7 @@ public class EnemyMovement : MonoBehaviour
             {
                 if (!inEndangeringCoroutine)
                 {
+                    SoundtrackBehavior.Instance.HiPassSoundtrack();
                     inEndangeringCoroutine = true;
                     endangeringCoroutine = EndangerPlayer();
                     StartCoroutine(endangeringCoroutine);
@@ -163,6 +166,7 @@ public class EnemyMovement : MonoBehaviour
             {
                 if (inEndangeringCoroutine)
                 {
+                    SoundtrackBehavior.Instance.NormalSoundtrack();
                     Debug.Log("Trying to stop coroutine");
                     inEndangeringCoroutine = false;
                     StopCoroutine(endangeringCoroutine);
@@ -194,14 +198,15 @@ public class EnemyMovement : MonoBehaviour
 
         if (frontIsHit && frontHit.transform.CompareTag("Wall"))
         {
-            if (rightIsHit && rightHit.transform.CompareTag("Wall"))
-            {
-                vRotation -= 10f;
-            }
-            else
-            {
-                vRotation += 10f;
-            }
+            //if (rightIsHit && rightHit.transform.CompareTag("Wall"))
+            //{
+            //    vRotation -= 10f;
+            //}
+            //else
+            //{
+            //    vRotation += 10f;
+            //}
+            vRotation += Random.Range(0, 2) == 0 ? 10f : -10f;
         }
 
         if (!agent.pathPending)
@@ -284,10 +289,8 @@ public class EnemyMovement : MonoBehaviour
 
     IEnumerator EndangerPlayer()
     {
-        Debug.Log("Start hurting");
         flickeringCoroutine = GUIBehavior.Instance.PlayerHeartFlicker();
         yield return flickeringCoroutine;
-        Debug.Log("Life lost");
         enemySFX.PlayOneShot(SFXBehavior.Instance.EnemyLaugh);
         if (PlayerStats.Instance.RemainingLives == 1)
         {

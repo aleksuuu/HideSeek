@@ -10,10 +10,30 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: ebce2715135944027b96cd3fbccbf011
   m_FloatValues:
+    04d2d350d1db74aa39844dff43e8ae31: 10
     4478ab659c6e248fe868f89fa43493a7: 563
+    9096aa27bfad4468bb5227b4b63acb06: 0
     f4dfa57aa86fa485cbfb43d20f350825: 1
     44817a8d08d8c4fd98ae6d0fc6ede8dd: 0
   m_TransitionOverrides: {}
+--- !u!244 &-3842698761163163355
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 671e86aa6375d4782997bf4bfb080951
+  m_EffectName: Highpass
+  m_MixLevel: d97419439b1d44fc4b9948adbae117c3
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: 04d2d350d1db74aa39844dff43e8ae31
+  - m_ParameterName: Resonance
+    m_GUID: 2e131f214843f4fb2b08d539c56a350e
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!241 &24100000
 AudioMixerController:
   m_ObjectHideFlags: 0
@@ -27,6 +47,7 @@ AudioMixerController:
   - {fileID: 24500006}
   - {fileID: 2464278018356132818}
   - {fileID: -8929772400235838985}
+  - {fileID: 5940952131545189346}
   m_StartSnapshot: {fileID: 2464278018356132818}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
@@ -54,6 +75,7 @@ AudioMixerGroupController:
   m_Effects:
   - {fileID: 24400004}
   - {fileID: 296223877824201587}
+  - {fileID: -3842698761163163355}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -82,7 +104,9 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: c77f441fe48484e2295cdc46ba01b70a
   m_FloatValues:
+    04d2d350d1db74aa39844dff43e8ae31: 10
     4478ab659c6e248fe868f89fa43493a7: 22000
+    9096aa27bfad4468bb5227b4b63acb06: 0
   m_TransitionOverrides:
     44817a8d08d8c4fd98ae6d0fc6ede8dd: 3
 --- !u!244 &296223877824201587
@@ -113,6 +137,22 @@ AudioMixerSnapshotController:
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 02aecd3c637714e0bbb17becdbb23923
   m_FloatValues:
+    04d2d350d1db74aa39844dff43e8ae31: 10
     4478ab659c6e248fe868f89fa43493a7: 22000
+    9096aa27bfad4468bb5227b4b63acb06: 0
     44817a8d08d8c4fd98ae6d0fc6ede8dd: -80
   m_TransitionOverrides: {}
+--- !u!245 &5940952131545189346
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HiPassed
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: 75deb2cb37e85442ea00ff8f98b6fddc
+  m_FloatValues:
+    04d2d350d1db74aa39844dff43e8ae31: 1000
+    4478ab659c6e248fe868f89fa43493a7: 22000
+  m_TransitionOverrides:
+    44817a8d08d8c4fd98ae6d0fc6ede8dd: 3

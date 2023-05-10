@@ -47,7 +47,6 @@ public class GameBehavior : MonoBehaviour
         get => _currentState;
         set
         {
-            _currentState = value;
             switch (value)
             {
                 case State.Start:
@@ -59,7 +58,14 @@ public class GameBehavior : MonoBehaviour
                 case State.Play:
                     GUIBehavior.Instance.ClearMessage();
                     GUIBehavior.Instance.ShowTitle(false);
-                    SoundtrackBehavior.Instance.FadeInSoundtrack();
+                    if (_currentState == State.Pause)
+                    {
+                        SoundtrackBehavior.Instance.NormalSoundtrack(); // close low pass immediately
+                    }
+                    else
+                    {
+                        SoundtrackBehavior.Instance.FadeInSoundtrack();
+                    }
                     Time.timeScale = 1f;
                     break;
                 case State.Pause:
@@ -81,6 +87,7 @@ public class GameBehavior : MonoBehaviour
                     Time.timeScale = 0f;
                     break;
             }
+            _currentState = value;
         }
     }
     void Start()
