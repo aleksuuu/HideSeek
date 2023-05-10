@@ -258,6 +258,7 @@ public class EnemyMovement : MonoBehaviour
             playerSFX.PlayOneShot(SFXBehavior.Instance.PlayerGroan);
         }
         PlayerStats.Instance.RemainingLives--;
+        inEndangeringCoroutine = false;
     }
 
     IEnumerator OnCollisionEnter(Collision collision)
