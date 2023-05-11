@@ -155,15 +155,15 @@ public class EnemyMovement : MonoBehaviour
 
         if (frontIsHit && frontHit.transform.CompareTag("Wall"))
         {
-            //if (rightIsHit && rightHit.transform.CompareTag("Wall"))
-            //{
-            //    vRotation -= 10f;
-            //}
-            //else
-            //{
-            //    vRotation += 10f;
-            //}
-            vRotation += Random.Range(0, 2) == 0 ? 10f : -10f;
+            if (rightIsHit && rightHit.transform.CompareTag("Wall"))
+            {
+                vRotation -= 10f;
+            }
+            else
+            {
+                vRotation += 10f;
+            }
+            //vRotation += Random.Range(0, 2) == 0 ? 10f : -10f;
         }
 
         if (!agent.pathPending)
